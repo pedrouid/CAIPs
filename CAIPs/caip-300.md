@@ -57,7 +57,7 @@ The JSON-RPC method is labelled as `wallet_connect` and expects the following pa
   - method - the RPC method being requested
   - params - will include params specific to the RPC method
 
-The methods that are allowed to be batched together in the `wallet_connect` request is going to be going to dependant on each ecosystem that must be defined under the Namespaces repo to define a CAIP-300 profile
+The methods that are allowed to be batched together in the `wallet_connect` request is going to be going to dependant on each ecosystem that must be defined under the [Namespaces][namespaces] repo to define a CAIP-300 profile
 
 ### Response
 
@@ -92,7 +92,7 @@ The following Error responses MUST be used:
 
 ### Fallback Behavior
 
-For backwards-compatibility, there is going to be a fallback behavior that is expected but is going to dependant on each ecosystem that must be defined under the Namespaces repo to define a CAIP-300 profile.
+For backwards-compatibility, there is going to be a fallback behavior that is expected but is going to dependant on each ecosystem that must be defined under the [Namespaces][namespaces] repo to define a CAIP-300 profile.
 
 If we take for example Ethereum this would fallback to the legacy behavior of `eth_requestAccounts` as defined by ERC-1102
 
@@ -209,12 +209,14 @@ There standard can also be used in parallel where a wallet can respond both to t
 - [CAIP-25][caip-25] - Wallet Create Session RPC Method
 - [CAIP-122][caip-122] - Sign in With X (SIWx)
 - [CAIP-222][caip-222] - Wallet Authenticate JSON-RPC Method
+- [Namespaces][namespaces]: https://namespaces.chainAgnostic.org/
 
 [caip-2]: https://chainagnostic.org/CAIPs/caip-2
 [caip-10]: https://chainagnostic.org/CAIPs/caip-10
 [caip-25]: https://chainagnostic.org/CAIPs/caip-25
 [caip-122]: https://chainagnostic.org/CAIPs/caip-122
 [caip-222]: https://chainagnostic.org/CAIPs/caip-222
+[namespaces]: https://namespaces.chainAgnostic.org/
 
 ## Copyright
 

@@ -159,7 +159,7 @@ The `properties` object MAY be included for global session metadata.
       "eip155": {
         "chains": ["1", "8453", "42161"],
         "accounts": ["0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb"],
-        "methods": ["eth_sendTransaction", "personal_sign"],
+        "methods": ["eth_sendTransaction"],
         "notifications": ["accountsChanged", "chainChanged"],
         "capabilities": {},
         "extensions": {

@@ -61,7 +61,42 @@ If a connection is rejected, the wallet MAY respond with a generic error or sile
 
 #### Request
 
+TODO
+
+The `scopes` object MUST contain one or more scopeObjects.
+
+The `properties` object MAY be included for global session metadata.
+
+### Response
+
+#### Success
+
+TODO
+
+Each entry within `scopes` object MAY contain `accounts` and `capabilities` as part of its object for success response.
+
+#### Error Codes
+
+The wallet MAY return generic or specific error messages depending on trust. Trusted responses may include codes like:
+
+- `5000`: Unknown error
+- `5001`: User disapproved requested methods
+- `5002`: User disapproved requested notifications
+- `5100-5102`: Unsupported chains, methods, or notifications
+- `5201-5302`: Malformed requests
+
+## Examples
+
+Example 1 - BLA BLA BLA
+
+<table>
+
+<tr>
+
+<td>
+
 ```jsonc
+// JSON-RPC REQUEST
 {
   "id": 1,
   "jsonrpc": "2.0",
@@ -119,15 +154,12 @@ If a connection is rejected, the wallet MAY respond with a generic error or sile
 }
 ```
 
-The `scopes` object MUST contain one or more scopeObjects.
+</td>
 
-The `properties` object MAY be included for global session metadata.
-
-### Response
-
-#### Success
+<td>
 
 ```jsonc
+// JSON-RPC RESPONSE
 {
   "id": 1,
   "jsonrpc": "2.0",
@@ -227,17 +259,11 @@ The `properties` object MAY be included for global session metadata.
 }
 ```
 
-Each entry within `scopes` object MAY contain `accounts` and `capabilities` as part of its object for success response.
+</td>
 
-#### Error Codes
+</tr>
 
-The wallet MAY return generic or specific error messages depending on trust. Trusted responses may include codes like:
-
-- `5000`: Unknown error
-- `5001`: User disapproved requested methods
-- `5002`: User disapproved requested notifications
-- `5100-5102`: Unsupported chains, methods, or notifications
-- `5201-5302`: Malformed requests
+</table>
 
 ## Security Considerations
 

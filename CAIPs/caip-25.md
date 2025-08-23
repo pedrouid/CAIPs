@@ -402,12 +402,6 @@ Finally the wallet has provided with the additional walletInfo session property.
 }
 ```
 
-</td>
-
-</tr>
-
-</table>
-
 ## Security Considerations
 
 To avoid ambiguity in authorizations, `scopes` MUST retain their original keyed structure using [CAIP-2][] or [CAIP-104][] identifiers. This ensures clarity in what is authorized and prevents accidental scope merging or misinterpretation.

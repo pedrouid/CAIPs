@@ -89,9 +89,9 @@ The wallet MAY return generic or specific error messages depending on trust. Tru
 
 Example 1 - BLA BLA BLA
 
-<table>
+<table style="border-collapse: collapse; border: 0; width: 100%; table-layout: fixed;">
 
-<tr>
+<tr style="vertical-align: top; width: 50%; padding: 0; border: 0;">
 
 <td>
 

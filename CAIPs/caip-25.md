@@ -61,7 +61,31 @@ If a connection is rejected, the wallet MAY respond with a generic error or sile
 
 #### Request
 
-TODO
+```typescript
+interface CAIP25JsonRpcRequest {
+  id: number;
+  jsonrpc: "2.0";
+  method: "wallet_createSession";
+  params: {
+    scopes: {
+      [scopeKey: string]: {
+        chains?: string[];
+        methods: string[];
+        notifications: string[];
+        extensions?: {
+          [chainId: string]: {
+            methods?: string[];
+            notifications?: string[];
+          };
+        };
+      };
+    };
+    properties?: {
+      [propertyKey: string]: any;
+    };
+  };
+}
+```
 
 The `scopes` object MUST contain one or more scopeObjects.
 
@@ -71,7 +95,38 @@ The `properties` object MAY be included for global session metadata.
 
 #### Success
 
-TODO
+```typescript
+interface CAIP25JsonRpcRequest {
+  id: number;
+  jsonrpc: "2.0";
+  result: {
+    scopes: {
+      [scopeKey: string]: {
+        chains?: string[];
+        accounts: string[];
+        methods: string[];
+        notifications: string[];
+        capabilities?: {
+          [capabilityKey: string]: any;
+        };
+        extensions?: {
+          [chainId: string]: {
+            accounts?: string[];
+            methods?: string[];
+            notifications?: string[];
+            capabilities?: {
+              [capabilityKey: string]: any;
+            };
+          };
+        };
+      };
+    };
+    properties?: {
+      [propertyKey: string]: any;
+    };
+  };
+}
+```
 
 Each entry within `scopes` object MAY contain `accounts` and `capabilities` as part of its object for success response.
 
@@ -87,13 +142,98 @@ The wallet MAY return generic or specific error messages depending on trust. Tru
 
 ## Examples
 
-Example 1 - BLA BLA BLA
+**Example 1**
 
-<table style="border-collapse: collapse; border: 0; width: 100%; table-layout: fixed;">
+For request, we define a very simple scope for 10 EVM chains with the exact same scope and no extensions.
 
-<tr style="vertical-align: top; width: 50%; padding: 0; border: 0;">
+```jsonc
+// JSON-RPC REQUEST
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "wallet_createSession",
+  "params": {
+    "scopes": {
+      "wallet": {
+        "methods": ["wallet_revokeSession", "wallet_getSession"],
+        "notifications": ["wallet_sessionChanged"],
+        "extensions": {
+          "wallet:eip155": {
+            "methods": ["personal_sign"]
+          }
+        }
+      },
+      "eip155": {
+        "chains": [
+          "1",
+          "10",
+          "130",
+          "324",
+          "2741",
+          "8453",
+          "42161",
+          "59144",
+          "534352",
+          "747474"
+        ],
+        "methods": ["eth_sendTransaction"],
+        "notifications": ["accountsChanged", "chainChanged"]
+      }
+    },
+    "properties": {
+      "expiry": "2022-12-24T17:07:31+00:00"
+    }
+  }
+}
+```
 
-<td>
+For response, we also keep it quite simple with no scope extensions or wallet capabilities and responded back with just a single account matching all requested EVM chains.
+
+```jsonc
+// JSON-RPC RESPONSE
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "scopes": {
+      "wallet": {
+        "accounts": [],
+        "methods": ["wallet_revokeSession", "wallet_getSession"],
+        "notifications": ["wallet_sessionChanged"],
+        "extensions": {
+          "wallet:eip155": {
+            "methods": ["personal_sign"]
+          }
+        }
+      },
+      "eip155": {
+        "chains": [
+          "1",
+          "10",
+          "130",
+          "324",
+          "2741",
+          "8453",
+          "42161",
+          "59144",
+          "534352",
+          "747474"
+        ],
+        "accounts": ["0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb"],
+        "methods": ["eth_sendTransaction"],
+        "notifications": ["accountsChanged", "chainChanged"]
+      }
+    },
+    "properties": {
+      "expiry": "2022-12-24T17:07:31+00:00"
+    }
+  }
+}
+```
+
+**Example 2**
+
+For the request, we define the expectation of 3 EVM chains with similar scope but with 2 of them that have extensions for capabilities. Additonally we have 2 Solana chains with similar scope
 
 ```jsonc
 // JSON-RPC REQUEST
@@ -154,9 +294,11 @@ Example 1 - BLA BLA BLA
 }
 ```
 
-</td>
+For the response, we match the same scopes as the request but include an EVM-wide capability under `wallet:eip155` plus we describe a EVM capability only available for a single chain which also has a chain-specific account available.
 
-<td>
+Additionaly we have the two Solana chains returning the same scopes but returning two different account addresses for each chain including a unique capability for one of the chains
+
+Finally the wallet has provided with the additional walletInfo session property.
 
 ```jsonc
 // JSON-RPC RESPONSE
@@ -167,6 +309,7 @@ Example 1 - BLA BLA BLA
     "sessionId": "0xdeadbeef",
     "scopes": {
       "wallet": {
+        "accounts": [],
         "methods": [
           "wallet_revokeSession",
           "wallet_getSession",

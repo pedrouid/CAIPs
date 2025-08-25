@@ -256,7 +256,8 @@ For the request, we define the expectation of 3 EVM chains with similar scope bu
             "methods": [
               "personal_sign",
               "wallet_grantPermissions",
-              "wallet_getAssets"
+              "wallet_getAssets",
+              "wallet_sendCalls"
             ]
           }
         }
@@ -264,15 +265,7 @@ For the request, we define the expectation of 3 EVM chains with similar scope bu
       "eip155": {
         "chains": ["1", "8453", "42161"],
         "methods": ["eth_sendTransaction"],
-        "notifications": ["accountsChanged", "chainChanged"],
-        "extensions": {
-          "eip155:8453": {
-            "methods": ["wallet_sendCalls"]
-          },
-          "eip155:42161": {
-            "methods": ["wallet_sendCalls"]
-          }
-        }
+        "notifications": ["accountsChanged", "chainChanged"]
       },
       "solana": {
         "chains": [
@@ -323,7 +316,8 @@ Finally the wallet has provided with the additional walletInfo session property.
             "methods": [
               "personal_sign",
               "wallet_grantPermissions",
-              "wallet_getAssets"
+              "wallet_getAssets",
+              "wallet_sendCalls"
             ],
             "capabilities": {
               "walletService": "https://wallet-service.example.com/rpc"
@@ -339,7 +333,6 @@ Finally the wallet has provided with the additional walletInfo session property.
         "capabilities": {},
         "extensions": {
           "eip155:8453": {
-            "methods": ["wallet_sendCalls"],
             "capabilities": {
               "atomic": {
                 "status": "supported"
@@ -348,7 +341,6 @@ Finally the wallet has provided with the additional walletInfo session property.
           },
           "eip155:42161": {
             "accounts": ["0x0495766cD136138Fc492Dd499B8DC87A92D6685b"],
-            "methods": ["wallet_sendCalls"],
             "capabilities": {
               "atomic": {
                 "status": "supported"

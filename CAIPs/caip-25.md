@@ -81,7 +81,8 @@ If a connection is rejected, the wallet MAY respond with a generic error or sile
             "methods": [
               "personal_sign",
               "wallet_grantPermissions",
-              "wallet_getAssets"
+              "wallet_getAssets",
+              "wallet_sendCalls"
             ]
           }
         }
@@ -89,15 +90,7 @@ If a connection is rejected, the wallet MAY respond with a generic error or sile
       "eip155": {
         "chains": ["1", "8453", "42161"],
         "methods": ["eth_sendTransaction"],
-        "notifications": ["accountsChanged", "chainChanged"],
-        "extensions": {
-          "eip155:8453": {
-            "methods": ["wallet_sendCalls"]
-          },
-          "eip155:42161": {
-            "methods": ["wallet_sendCalls"]
-          }
-        }
+        "notifications": ["accountsChanged", "chainChanged"]
       },
       "solana": {
         "chains": [
@@ -148,7 +141,8 @@ The `properties` object MAY be included for global session metadata.
             "methods": [
               "personal_sign",
               "wallet_grantPermissions",
-              "wallet_getAssets"
+              "wallet_getAssets",
+              "wallet_sendCalls"
             ],
             "capabilities": {
               "walletService": "https://wallet-service.example.com/rpc"
@@ -164,7 +158,6 @@ The `properties` object MAY be included for global session metadata.
         "capabilities": {},
         "extensions": {
           "eip155:8453": {
-            "methods": ["wallet_sendCalls"],
             "capabilities": {
               "atomic": {
                 "status": "supported"
@@ -173,7 +166,6 @@ The `properties` object MAY be included for global session metadata.
           },
           "eip155:42161": {
             "accounts": ["0x0495766cD136138Fc492Dd499B8DC87A92D6685b"],
-            "methods": ["wallet_sendCalls"],
             "capabilities": {
               "atomic": {
                 "status": "supported"

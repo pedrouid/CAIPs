@@ -49,7 +49,7 @@ Callers may revoke sessions using `wallet_revokeSession`, passing the `sessionId
 
 Authorization requests are expressed as a top-level object `scopes` containing keyed [scopeObjects][CAIP-217].
 
-Each `scopeObject` is keyed by a [CAIP-2][] chain ID. A null reference can be used to refer to a scope that applies to ANY chain within that namespace (eg. `eip155:0`)
+Each `scopeObject` is keyed by a [CAIP-2][] or [CAIP-104][] identifiers. A null reference can be used to refer to a scope that applies to ANY chain within that namespace (eg. `eip155:0`)
 
 Wallets MAY authorize a subset of scopes or scope properties as requested, and MAY also authorize additional scopes or scope properties. This enables granular control and flexibility on the part of the respondent.
 
@@ -154,15 +154,6 @@ For request, we define a very simple scope for 10 EVM chains with the exact same
   "method": "wallet_createSession",
   "params": {
     "scopes": {
-      "wallet": {
-        "methods": ["wallet_revokeSession", "wallet_getSession"],
-        "notifications": ["wallet_sessionChanged"],
-        "extensions": {
-          "wallet:eip155": {
-            "methods": ["personal_sign"]
-          }
-        }
-      },
       "eip155": {
         "chains": [
           "1",
@@ -176,7 +167,7 @@ For request, we define a very simple scope for 10 EVM chains with the exact same
           "534352",
           "747474"
         ],
-        "methods": ["eth_sendTransaction"],
+        "methods": ["eth_sendTransaction", "personal_sign"],
         "notifications": ["accountsChanged", "chainChanged"]
       }
     },
@@ -196,16 +187,6 @@ For response, we also keep it quite simple with no scope extensions or wallet ca
   "jsonrpc": "2.0",
   "result": {
     "scopes": {
-      "wallet": {
-        "accounts": [],
-        "methods": ["wallet_revokeSession", "wallet_getSession"],
-        "notifications": ["wallet_sessionChanged"],
-        "extensions": {
-          "wallet:eip155": {
-            "methods": ["personal_sign"]
-          }
-        }
-      },
       "eip155": {
         "chains": [
           "1",
@@ -220,7 +201,7 @@ For response, we also keep it quite simple with no scope extensions or wallet ca
           "747474"
         ],
         "accounts": ["0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb"],
-        "methods": ["eth_sendTransaction"],
+        "methods": ["eth_sendTransaction", "personal_sign"],
         "notifications": ["accountsChanged", "chainChanged"]
       }
     },
@@ -233,7 +214,7 @@ For response, we also keep it quite simple with no scope extensions or wallet ca
 
 **Example 2**
 
-For the request, we define the expectation of 3 EVM chains with similar scope but with 2 of them that have extensions for capabilities. Additonally we have 2 Solana chains with similar scope
+For the request, we define the expectation of 5 EVM chains with similar scope and additonally we have 2 Solana chains with similar scope
 
 ```jsonc
 // JSON-RPC REQUEST
@@ -243,28 +224,15 @@ For the request, we define the expectation of 3 EVM chains with similar scope bu
   "method": "wallet_createSession",
   "params": {
     "scopes": {
-      "wallet": {
-        "methods": [
-          "wallet_revokeSession",
-          "wallet_getSession",
-          "wallet_authenticate",
-          "wallet_pay"
-        ],
-        "notifications": ["wallet_sessionChanged"],
-        "extensions": {
-          "wallet:eip155": {
-            "methods": [
-              "personal_sign",
-              "wallet_grantPermissions",
-              "wallet_getAssets",
-              "wallet_sendCalls"
-            ]
-          }
-        }
-      },
       "eip155": {
-        "chains": ["1", "8453", "42161"],
-        "methods": ["eth_sendTransaction"],
+        "chains": ["1", "10", "324", "8453", "42161"],
+        "methods": [
+          "eth_sendTransaction",
+          "personal_sign",
+          "wallet_grantPermissions",
+          "wallet_getAssets",
+          "wallet_sendCalls"
+        ],
         "notifications": ["accountsChanged", "chainChanged"]
       },
       "solana": {
@@ -287,11 +255,11 @@ For the request, we define the expectation of 3 EVM chains with similar scope bu
 }
 ```
 
-For the response, we match the same scopes as the request but include an EVM-wide capability under `wallet:eip155` plus we describe a EVM capability only available for a single chain which also has a chain-specific account available.
+For the response, we match the same scopes as the request but segregate 2 out of 5 EVM chains into their scopes because of either exclusive accounts or capabilities.
 
 Additionaly we have the two Solana chains returning the same scopes but returning two different account addresses for each chain including a unique capability for one of the chains
 
-Finally the wallet has provided with the additional walletInfo session property.
+Finally the wallet has provided within properties with its walletInfo per [CAIP-372][].
 
 ```jsonc
 // JSON-RPC RESPONSE
@@ -301,36 +269,20 @@ Finally the wallet has provided with the additional walletInfo session property.
   "result": {
     "sessionId": "0xdeadbeef",
     "scopes": {
-      "wallet": {
-        "accounts": [],
-        "methods": [
-          "wallet_revokeSession",
-          "wallet_getSession",
-          "wallet_authenticate",
-          "wallet_pay"
-        ],
-        "notifications": ["wallet_sessionChanged"],
-        "capabilities": {},
-        "extensions": {
-          "wallet:eip155": {
-            "methods": [
-              "personal_sign",
-              "wallet_grantPermissions",
-              "wallet_getAssets",
-              "wallet_sendCalls"
-            ],
-            "capabilities": {
-              "walletService": "https://wallet-service.example.com/rpc"
-            }
-          }
-        }
-      },
       "eip155": {
-        "chains": ["1", "8453", "42161"],
+        "chains": ["1", "10", "324", "8453", "42161"],
         "accounts": ["0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb"],
-        "methods": ["eth_sendTransaction"],
+        "methods": [
+          "eth_sendTransaction",
+          "personal_sign",
+          "wallet_grantPermissions",
+          "wallet_getAssets",
+          "wallet_sendCalls"
+        ],
         "notifications": ["accountsChanged", "chainChanged"],
-        "capabilities": {},
+        "capabilities": {
+          "walletService": "https://wallet-service.example.com/rpc"
+        },
         "extensions": {
           "eip155:8453": {
             "capabilities": {
@@ -426,6 +378,7 @@ To mitigate fingerprinting risks, wallets should prefer uniform or silent failur
 - [CAIP-312][] - `wallet_getSession` Specification
 - [CAIP-311][] - `wallet_sessionChanged` Specification
 - [CAIP-316][] - Session Lifecycle Management equivalence chart and diagrams
+- [CAIP-372][] - Wallet Information Metadata Standard
 - [RFC-2119][] - Key words for use in RFCs to Indicate Requirement Levels
 
 [CAIP-2]: https://chainagnostic.org/CAIPs/caip-2
@@ -437,6 +390,7 @@ To mitigate fingerprinting risks, wallets should prefer uniform or silent failur
 [CAIP-312]: https://chainagnostic.org/CAIPs/CAIP-312
 [CAIP-311]: https://chainagnostic.org/CAIPs/CAIP-311
 [CAIP-316]: https://chainagnostic.org/CAIPs/caip-316
+[CAIP-372]: https://chainagnostic.org/CAIPs/caip-372
 [RFC-2119]: https://datatracker.ietf.org/doc/html/rfc2119
 
 ## Copyright
